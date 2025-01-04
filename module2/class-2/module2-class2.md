@@ -117,6 +117,14 @@ Prevents users from deleting files they don’t own in a shared directory:
 ```bash
 chmod +t directory
 ```
+### Numaric Number
+0- **Start at 0**
+
+1- **If the setuid should be set, add 4**
+
+2- **If the setgid should be set, add 2**
+
+3- **If the sticky should be set, add 1**
 
 ---
 
