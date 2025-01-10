@@ -295,10 +295,4 @@ openssl passwd -6 -salt saltsalt123 mypassword
 |---------------------------------|------------------------------------|
 | Readable by all users           | Restricted access (root only)      |
 | Stores user account information | Stores sensitive password details  |
-| Does not contain hashed passwords | Contains hashed passwords          |
-
-<<<<<<< HEAD
----
-=======
----
->>>>>>> c9bc8777132be37d3fa02d2527c57b96ebd02324
+| Does not contain hashed passwords | Contains hashed passwords        |
