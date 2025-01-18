@@ -12,8 +12,8 @@
 - **Mandatory Access Control (MAC):** SELinux enforces object-based security that cannot be bypassed by user discretion.
 
 ### Difference from Standard File Permissions:
-- **File Permissions:** Control which users or groups can read, write, or execute a file.
-- **SELinux Policies:** Control how files are used and accessed by processes, preventing unintended actions even by authorized users.
+- **File Permissions:** Control which users or groups can read, write, or execute a file known as `Discretionary Access Control (DAC)`
+- **SELinux Policies:** Control how files are used and accessed by processes, preventing unintended actions even by authorized users known as `Mandatory Access Control (MAC)`
 
 ### Example:
 With write access to a file, any program can edit it. SELinux ensures that only specific, trusted programs can write to certain files, reducing risks of data corruption or unauthorized modifications.
@@ -58,6 +58,7 @@ Every resource (file, process, directory, port) in SELinux has a label called a 
 - **User:** Specifies the SELinux user.
 - **Role:** Defines the role allowed.
 - **Type:** Determines how the resource can be accessed (e.g., `httpd_t` for web server files).
+- **Security Level:** Define the security level
 
 ### Example of Context:
 For a web server, SELinux might restrict access to sensitive system directories or ports even if a user gains unauthorized access.
