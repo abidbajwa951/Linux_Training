@@ -90,33 +90,6 @@ The `groups` command displays the groups a user belongs to.
 groups john
 ```
 
-### **Changing Group Ownership**
-The `chgrp` command changes the group ownership of a file or directory.
-
-#### **Example**:
-```bash
-# Change group ownership of 'file.txt' to 'developers'
-sudo chgrp developers file.txt
-```
-
-### **Changing File Permissions for Groups**
-Use `chmod` to modify permissions for the group.
-
-#### **Example**:
-```bash
-# Grant group write permission to 'file.txt'
-sudo chmod g+w file.txt
-
-# Check permissions
-ls -l file.txt
-```
-Output:
-```plaintext
--rw-rw-r-- 1 john developers 0 Jan 4 12:00 file.txt
-```
-
----
-
 ## **3. Switching Users**
 
 ### **Using `su` (Switch User)**
@@ -131,22 +104,10 @@ su john
 su -
 ```
 
-### **Using `sudo` (Execute as Superuser)**
-The `sudo` command executes commands with root privileges.
-
-#### **Example**:
-```bash
-# List contents of a restricted directory
-sudo ls /root
-
-# Edit a file as root
-sudo nano /etc/passwd
-```
-
 ### **Configuring Sudo Access**
 To grant sudo access to a user, add them to the `sudo` group:
 ```bash
-sudo usermod -aG sudo john
+usermod -aG sudo john
 ```
 
 ---
