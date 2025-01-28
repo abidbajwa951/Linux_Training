@@ -1,6 +1,4 @@
-# Module 2:
-
-# Linux Command Exercises
+# Module 2: Linux Command Exercises
 
 ## Navigation Commands (ls, cd, pwd)
 
