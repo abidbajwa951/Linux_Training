@@ -234,81 +234,101 @@ To create a custom profile:
 
 By using `tuned`, system administrators can enhance system performance efficiently based on workload demands.
 
-# Influence Process Scheduling
+# **Influence Process Scheduling**
 
-## Objectives
-Learn how to prioritize or deprioritize specific processes using the `nice` and `renice` commands.
+## **Objectives**
+- Learn how to prioritize or deprioritize specific processes using the `nice` and `renice` commands.
 
-## Linux Process Scheduling
-Modern computers have multi-core CPUs that allow multiple instruction threads to be processed simultaneously. However, when the system is overloaded with more tasks than available processing power, Linux uses time-slicing (multitasking) to manage process execution efficiently.
+---
 
-## Process Priorities
-Each process has an importance level called priority. Linux employs scheduling policies to decide which processes get CPU time first. The Completely Fair Scheduler (CFS) manages normal processes by organizing them into a binary search tree based on their previous CPU usage.
+## **Linux Process Scheduling**
+Modern computer systems have multi-core, multi-thread CPUs that can execute multiple instruction threads at once. While a personal workstation is optimized for an individual user’s workload, enterprise servers handle thousands of processes, often leading to CPU saturation.
 
-### Nice Value
-- The `nice` value influences process scheduling.
-- Range: `-20` (higher priority) to `19` (lower priority), default is `0`.
-- A lower `nice` value increases priority, while a higher value decreases priority.
-- Only privileged users (root) can decrease the `nice` value, increasing priority.
-- Unprivileged users can only increase `nice` values, lowering priority.
+To manage this, Linux employs **time-slicing (multitasking)**, where the process scheduler rapidly switches between tasks, giving the illusion that multiple processes run simultaneously.
 
-### Viewing Nice Values
-- Use `top` to view process priorities.
-  ```bash
-  top
-  ```
-  - The `NI` column shows nice values.
-  - The `PR` column shows actual priority.
-- Use `ps` to view process details:
-  ```bash
-  ps axo pid,comm,nice,cls --sort=-nice
-  ```
-  - The `CLS` column indicates the scheduling class (`TS` for normal processes).
+---
 
-### Example Output from `top`:
+## **Process Priorities**
+Each process has a **priority level**, which determines how much CPU time it receives. Linux uses scheduling policies to manage processes:
+- **Interactive processes** (e.g., user applications)
+- **Batch processing** (e.g., background tasks)
+- **Real-time processes** (e.g., critical system tasks)
+
+For normal processes, Linux uses the **Completely Fair Scheduler (CFS)**, which organizes processes in a **binary tree** to determine execution order.
+
+---
+
+## **What is a Binary Tree in Scheduling?**
+A **binary tree** is a structure used by the CFS scheduler to organize processes based on CPU usage:
+- **Processes that have used less CPU time are placed higher** and executed first.
+- **Processes with more CPU time are placed lower** and must wait longer.
+
+### **Example of a Binary Tree:**
+```
+       (Process A) - Least CPU Used  
+      /            \  
+(Process B)    (Process C)  
+    /      \           \  
+(D)       (E)         (F) - Most CPU Used  
+```
+- **Process A runs first**, followed by B and C, ensuring fair CPU distribution.
+
+---
+
+## **Nice Values and Process Priority**
+Linux allows users to adjust process priority using the **nice value**:
+- **Lower nice value (-20)** → Higher priority (runs sooner)
+- **Higher nice value (19)** → Lower priority (runs later)
+- **Default nice value is 0**
+
+Example:
+- A **video player** might have a **nice value of -5** (higher priority).
+- A **background task** like file indexing might have a **nice value of 10** (lower priority).
+
+---
+
+## **Modifying Nice Values**
+### **Start a Process with a Nice Value**
+By default, new processes inherit their parent’s nice value. The `nice` command can set a custom nice value:
+
 ```bash
-PID USER  PR  NI  VIRT  RES  SHR S  %CPU %MEM TIME+ COMMAND
-1   root  20   0  172180 16232 10328 S  0.0  0.3  0:01.49 systemd
-2   root  20   0  0  0  0 S  0.0  0.0  0:00.01 kthreadd
+nice -n 15 sleep 60 &
+```
+- This starts the `sleep` command with a nice value of `15` (lower priority).
+
+### **Modify an Existing Process's Nice Value**
+To change the nice value of a running process, use `renice`:
+
+```bash
+renice -n 19 2740
+```
+- This changes process **2740’s** priority to `19` (lowest priority).
+
+Only **root users** can decrease a process’s nice value (increase priority), while normal users can only increase it.
+
+---
+
+## **Viewing Process Priorities with `ps`**
+The `ps` command shows process priorities:
+
+```bash
+ps axo pid,comm,nice,cls --sort=-nice
 ```
 
-## Starting Processes with Nice Values
-- When a process starts, it inherits its parent's `nice` value.
-- Default `nice` value: `0`.
-- Example:
-  ```bash
-  sleep 60 &
-  ps -o pid,comm,nice <PID>
-  ```
+### **Example Output:**
+```
+PID   COMMAND         NI   CLS  
+33    khugepaged     10   TS  
+32    ksma            5   TS  
+814   rtkit-daemon    1   TS  
+1     systemd         0   TS  
+2     kthreadd        -    TS  
+15    migration/0     -    FF  
+```
+- **CLS (Scheduling Class):**
+  - **TS (Time Sharing)** – Default scheduling for normal processes.
+  - **FF (First In First Out)** – Real-time scheduling.
+  - **R (Round Robin)** – Another real-time scheduling policy.
+- Real-time processes (FF/R) **do not** have nice values.
 
-### Using `nice`
-- Start a process with a specific `nice` value:
-  ```bash
-  nice -n 15 sleep 60 &
-  ps -o pid,comm,nice <PID>
-  ```
-  - The process runs with a `nice` value of 15, making it lower priority.
-- Default `nice` usage without `-n` sets the process to `10`.
-
-## Changing Nice Values of Existing Processes
-- Use `renice` to modify an active process’s priority.
-- Example:
-  ```bash
-  renice -n 19 <PID>
-  ```
-  - Changes the process priority from its current `nice` value to `19`.
-
-### Interactive Renicing with `top`
-- Run `top`.
-- Press `r`.
-- Enter process ID and new nice value.
-
-## Summary
-- Linux schedules processes using CFS.
-- `nice` values influence priority but do not guarantee CPU time.
-- Privileged users can decrease `nice` values, increasing priority.
-- `renice` modifies priority of existing processes.
-- `top` and `ps` display process scheduling information.
-
-By using `nice` and `renice`, users can control CPU allocation and system performance effectively.
-
+---
